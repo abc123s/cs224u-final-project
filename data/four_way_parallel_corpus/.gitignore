@@ -1,0 +1,4 @@
+*
+!.gitignore
+!train_doc_ids.json
+!eval_doc_ids.json
