@@ -25,7 +25,7 @@ params = {
     # training
     "MAX_SEQ_LENGTH": 128,
     "EPOCHS": 1,
-    "BATCH_SIZE": 16,
+    "BATCH_SIZE": 8,
 }
 
 # make experiment directory and save experiment params down
@@ -62,7 +62,7 @@ model_args.reprocess_input_data = True
 model_args.overwrite_output_dir = True
 model_args.preprocess_inputs = False
 model_args.num_return_sequences = 1
-model_args.tensorboard = experiment_dir + "/logs"
+model_args.tensorboard_dir = experiment_dir + "/logs"
 
 model = T5Model(
     params["MODEL_TYPE"],
