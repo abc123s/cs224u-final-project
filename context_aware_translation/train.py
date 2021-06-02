@@ -56,6 +56,7 @@ model_args.use_multiprocessing = False
 model_args.use_multiprocessing_for_evaluation = False
 model_args.fp16 = False
 model_args.output_dir = experiment_dir
+model_args.best_model_dir = experiment_dir + "/best_model"
 model_args.save_steps = -1
 model_args.save_eval_checkpoints = False
 model_args.no_cache = True
