@@ -21,6 +21,7 @@ params = {
     "CORPUS": "four_way_parallel_corpus",
     "LANGUAGE_PAIR": "en-ja",
     "CONTEXT_TYPE": "2-to-2",
+    "BREAK_TOKEN": "<break>",
 
     # training
     "MAX_SEQ_LENGTH": 128,
@@ -41,8 +42,8 @@ with open(experiment_dir + "/params.json", "w") as f:
     json.dump(params, f, indent=4)
 
 # preprocess data
-train_df = preprocess(params["CORPUS"], params["LANGUAGE_PAIR"], 'train', params["CONTEXT_TYPE"])
-eval_df = preprocess(params["CORPUS"], params["LANGUAGE_PAIR"], 'eval', params["CONTEXT_TYPE"])
+train_df = preprocess(params["CORPUS"], params["LANGUAGE_PAIR"], 'train', params["CONTEXT_TYPE"], params["BREAK_TOKEN"])
+eval_df = preprocess(params["CORPUS"], params["LANGUAGE_PAIR"], 'eval', params["CONTEXT_TYPE"], params["BREAK_TOKEN"])
 
 # set up model
 model_args = T5Args()
@@ -65,6 +66,7 @@ model_args.overwrite_output_dir = True
 model_args.preprocess_inputs = False
 model_args.num_return_sequences = 1
 model_args.tensorboard_dir = experiment_dir + "/logs"
+model_args.special_tokens_list = [params["BREAK_TOKEN"]]
 
 model = T5Model(
     params["MODEL_TYPE"],

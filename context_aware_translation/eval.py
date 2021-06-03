@@ -11,13 +11,13 @@ from preprocess import preprocess
 
 # helper function to calculate bleu score ignoring context
 # sentence (if provided) and removing separator tokens
-def target_sentence_bleu(model_translations, gold_translations, sep_token):
+def target_sentence_bleu(model_translations, gold_translations, break_token):
     # remove context sentence (if provided) and
     # separator tokens from model translations
     # since we only want to evaluate the quality of the (second)
     # target sentence translation, not the (first) context sentence
     target_model_translations = [
-        model_translation.split(sep_token)[-2]
+        model_translation.split(break_token)[-1]
         for model_translation in model_translations
     ]
 
@@ -27,7 +27,7 @@ def target_sentence_bleu(model_translations, gold_translations, sep_token):
     # target sentence translation, not the (first) context sentence
     target_gold_translations = [
         [
-            gold_translation.split(sep_token)[-2]
+            gold_translation.split(break_token)[-1]
             for gold_translation in gold_translation_option
         ]
         for gold_translation_option in gold_translations
@@ -74,7 +74,7 @@ model = T5Model(
 )
 
 # load in evaluation data
-eval_df = preprocess(eval_params["CORPUS"], eval_params["LANGUAGE_PAIR"], 'eval', eval_params["CONTEXT_TYPE"])
+eval_df = preprocess(eval_params["CORPUS"], eval_params["LANGUAGE_PAIR"], 'eval', eval_params["CONTEXT_TYPE"], model_params["special_tokens_list"][0])
 source_sentences = eval_df["input_text"].tolist()
 gold_translations = [eval_df["target_text"].tolist()]
 
@@ -85,7 +85,7 @@ model_translations = model.predict(source_sentences)
 bleu_score = sacrebleu.corpus_bleu(model_translations, gold_translations)
 
 # calculate bleu score without context sentence (and sep tokens)
-contextless_bleu_score = target_sentence_bleu(model_translations, gold_translations, tokenizer_params['eos_token'])
+contextless_bleu_score = target_sentence_bleu(model_translations, gold_translations, model_params["special_tokens_list"][0])
 
 # save down results
 if not os.path.isdir(eval_params["OUTPUT_PATH"]):
