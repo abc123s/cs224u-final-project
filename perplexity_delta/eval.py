@@ -9,6 +9,8 @@ from tqdm import tqdm
 
 from preprocess import preprocess
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
 language = "fr"
 
 language_models = {
@@ -38,14 +40,14 @@ with open(experiment_dir + "/params.json", "w") as f:
 # load pre-trained causal language model
 if params["LANGUAGE"] == "en":
     tokenizer = GPT2TokenizerFast.from_pretrained(params["MODEL"])
-    model = GPT2LMHeadModel.from_pretrained(params["MODEL"])
+    model = GPT2LMHeadModel.from_pretrained(params["MODEL"]).to(device)
 elif params["LANGUAGE"] == "ja":
     tokenizer = T5TokenizerFast.from_pretrained(params["MODEL"])
     tokenizer.do_lower_case = True  # due to some bug of tokenizer config loading
-    model = AutoModelForCausalLM.from_pretrained(params["MODEL"])
+    model = AutoModelForCausalLM.from_pretrained(params["MODEL"]).to(device)
 else:
     tokenizer = AutoTokenizer.from_pretrained(params["MODEL"])
-    model = AutoModelForCausalLM.from_pretrained(params["MODEL"])
+    model = AutoModelForCausalLM.from_pretrained(params["MODEL"]).to(device)
 
 # compute perplexity delta on selected corpus
 examples = preprocess('four_way_parallel_corpus', params["LANGUAGE"], 'eval')
@@ -60,7 +62,7 @@ for i in tqdm(range(len(examples))):
     target_encoding = tokenizer(target_sentence).input_ids
 
     # compute perplexity with context
-    input_ids_with_context = torch.tensor([[*context_encoding, *target_encoding]])
+    input_ids_with_context = torch.tensor([[*context_encoding, *target_encoding]]).to(device)
     target_ids_with_context = input_ids_with_context.clone()
     # ignore loss from context sentence tokens
     target_ids_with_context[:,:-len(target_encoding)] = -100
@@ -73,7 +75,7 @@ for i in tqdm(range(len(examples))):
     perplexities_with_context.append(perplexity_with_context)
 
     # compute perplexity without context
-    input_ids_without_context = torch.tensor([[*target_encoding]])
+    input_ids_without_context = torch.tensor([[*target_encoding]]).to(device)
     target_ids_without_context = input_ids_without_context.clone()
 
     with torch.no_grad():
