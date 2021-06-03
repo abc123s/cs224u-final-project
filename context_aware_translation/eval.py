@@ -41,7 +41,8 @@ eval_params = {
 
     # which model to evaluate
     "MODEL_DIR": "./experiments/20210601_1917_6c01bf8/best_model",
-    
+    "TRAINING_PARAMS_PATH": "./experiments/20210601_1917_6c01bf8/params.json",
+
     # eval data
     "CORPUS": "four_way_parallel_corpus",
     "LANGUAGE_PAIR": "en-ja",
@@ -53,7 +54,10 @@ eval_params = {
     "BEAM_WIDTH": 10,
 }
 
-# load tokenizer and model params
+# load tokenizer, model, and training params
+with open(eval_params["TRAINING_PARAMS_PATH"], "r") as f:
+    training_params = json.load(f)
+
 with open(eval_params["MODEL_DIR"] + "/model_args.json", "r") as f:
     model_params = json.load(f)
 
@@ -74,7 +78,7 @@ model = T5Model(
 )
 
 # load in evaluation data
-eval_df = preprocess(eval_params["CORPUS"], eval_params["LANGUAGE_PAIR"], 'eval', eval_params["CONTEXT_TYPE"], model_params["special_tokens_list"][0])
+eval_df = preprocess(eval_params["CORPUS"], eval_params["LANGUAGE_PAIR"], 'eval', eval_params["CONTEXT_TYPE"], training_params["BREAK_TOKEN"])
 source_sentences = eval_df["input_text"].tolist()
 gold_translations = [eval_df["target_text"].tolist()]
 
@@ -85,7 +89,7 @@ model_translations = model.predict(source_sentences)
 bleu_score = sacrebleu.corpus_bleu(model_translations, gold_translations)
 
 # calculate bleu score without context sentence (and sep tokens)
-contextless_bleu_score = target_sentence_bleu(model_translations, gold_translations, model_params["special_tokens_list"][0])
+contextless_bleu_score = target_sentence_bleu(model_translations, gold_translations, training_params["BREAK_TOKEN"])
 
 # save down results
 if not os.path.isdir(eval_params["OUTPUT_PATH"]):

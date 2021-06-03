@@ -66,7 +66,6 @@ model_args.overwrite_output_dir = True
 model_args.preprocess_inputs = False
 model_args.num_return_sequences = 1
 model_args.tensorboard_dir = experiment_dir + "/logs"
-model_args.special_tokens_list = [params["BREAK_TOKEN"]]
 
 model = T5Model(
     params["MODEL_TYPE"],
