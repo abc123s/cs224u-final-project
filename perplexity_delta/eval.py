@@ -48,7 +48,7 @@ else:
     model = AutoModelForCausalLM.from_pretrained(params["MODEL"])
 
 # compute perplexity delta on selected corpus
-examples = preprocess('four_way_parallel_corpus', params["LANGUAGE"], 'eval')[0:100]
+examples = preprocess('four_way_parallel_corpus', params["LANGUAGE"], 'eval')
 
 perplexities_with_context = []
 perplexities_without_context =[]
