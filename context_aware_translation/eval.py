@@ -49,7 +49,7 @@ eval_params = {
     "CONTEXT_TYPE": "random-context",
 
     # eval specifics
-    "MAX_SEQ_LENGTH": 512,
+    "MAX_SEQ_LENGTH": 256,
     "LENGTH_PENALTY": 1,
     "BEAM_WIDTH": 10,
 }
