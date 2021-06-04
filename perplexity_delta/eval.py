@@ -89,8 +89,6 @@ for i in tqdm(range(len(examples))):
         perplexity_deltas.append(perplexity_without_context - perplexity_with_context)
         percent_perplexity_deltas.append((perplexity_without_context - perplexity_with_context) / perplexity_without_context)
 
-
-
 def corpus_perplexity(perplexities):
     log_perplexities = [math.log(perplexity) for perplexity in perplexities]
     average_log_perplexity = sum(log_perplexities) / len(log_perplexities)

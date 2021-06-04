@@ -49,9 +49,9 @@ eval_params = {
     "CONTEXT_TYPE": "random-context",
 
     # eval specifics
-    "MAX_SEQ_LENGTH": 512,
+    "MAX_SEQ_LENGTH": 128,
     "LENGTH_PENALTY": 1,
-    "BEAM_WIDTH": 10,
+    "BEAM_WIDTH": 5,
 }
 
 # load tokenizer, model, and training params

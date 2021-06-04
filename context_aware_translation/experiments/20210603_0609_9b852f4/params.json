@@ -1,0 +1,11 @@
+{
+    "MODEL_TYPE": "mt5",
+    "MODEL_NAME": "google/mt5-base",
+    "CORPUS": "four_way_parallel_corpus",
+    "LANGUAGE_PAIR": "en-es",
+    "CONTEXT_TYPE": "2-to-2",
+    "BREAK_TOKEN": "<break>",
+    "MAX_SEQ_LENGTH": 128,
+    "EPOCHS": 3,
+    "BATCH_SIZE": 8
+}
