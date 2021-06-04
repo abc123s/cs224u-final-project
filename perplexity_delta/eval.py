@@ -1,3 +1,4 @@
+import math
 import os
 import subprocess
 import json
@@ -50,7 +51,7 @@ else:
     model = AutoModelForCausalLM.from_pretrained(params["MODEL"]).to(device)
 
 # compute perplexity delta on selected corpus
-examples = preprocess('four_way_parallel_corpus', params["LANGUAGE"], 'eval')
+examples = preprocess('four_way_parallel_corpus', params["LANGUAGE"], 'eval')[0:100]
 
 perplexities_with_context = []
 perplexities_without_context =[]
@@ -71,8 +72,6 @@ for i in tqdm(range(len(examples))):
         loss_with_context = model(input_ids_with_context, labels=target_ids_with_context)[0]
         # perplexity is the exponentiation of the cross-entropy loss
         perplexity_with_context = torch.exp(loss_with_context).item()
-    
-    perplexities_with_context.append(perplexity_with_context)
 
     # compute perplexity without context
     input_ids_without_context = torch.tensor([[*target_encoding]]).to(device)
@@ -83,11 +82,23 @@ for i in tqdm(range(len(examples))):
         # perplexity is the exponentiation of the cross-entropy loss
         perplexity_without_context = torch.exp(loss_without_context).item()
 
-    perplexities_without_context.append(perplexity_without_context)
+    if math.isfinite(perplexity_with_context) and math.isfinite(perplexity_without_context):
+        perplexities_with_context.append(perplexity_with_context)
+        perplexities_without_context.append(perplexity_without_context)
 
-    perplexity_deltas.append(perplexity_without_context - perplexity_with_context)
-    percent_perplexity_deltas.append((perplexity_without_context - perplexity_with_context) / perplexity_without_context)
+        perplexity_deltas.append(perplexity_without_context - perplexity_with_context)
+        percent_perplexity_deltas.append((perplexity_without_context - perplexity_with_context) / perplexity_without_context)
 
+
+
+def corpus_perplexity(perplexities):
+    log_perplexities = [math.log(perplexity) for perplexity in perplexities]
+    average_log_perplexity = sum(log_perplexities) / len(log_perplexities)
+    
+    return math.exp(average_log_perplexity)
+
+corpus_perplexity_with_context = corpus_perplexity(perplexities_with_context)
+corpus_perplexity_without_context = corpus_perplexity(perplexities_without_context)
 average_perplexity_with_context = sum(perplexities_with_context) / len(perplexities_with_context)
 average_perplexity_without_context = sum(perplexities_without_context) / len(perplexities_without_context)
 average_perplexity_deltas = sum(perplexity_deltas) / len(perplexity_deltas)
@@ -97,6 +108,8 @@ average_percent_perplexity_deltas = sum(percent_perplexity_deltas) / len(percent
 # save params down
 with open(experiment_dir + "/results.json", "w") as f:
     json.dump({
+        "CORPUS_PERPLEXITY_WITH_CONTEXT": corpus_perplexity_with_context,
+        "CORPUS_PERPLEXITY_WITHOUT_CONTEXT": corpus_perplexity_without_context,
         "AVERAGE_PERPLEXITY_WITH_CONTEXT": average_perplexity_with_context,
         "AVERAGE_PERPLEXITY_WITHOUT_CONTEXT": average_perplexity_without_context,
         "AVERAGE_PERPLEXITY_DELTA": average_perplexity_deltas,
