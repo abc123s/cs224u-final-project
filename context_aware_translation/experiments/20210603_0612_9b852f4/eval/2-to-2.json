@@ -1,0 +1,15 @@
+{
+    "OUTPUT_PATH": "./experiments/20210603_0612_9b852f4/eval/",
+    "MODEL_DIR": "./experiments/20210603_0612_9b852f4/best_model",
+    "TRAINING_PARAMS_PATH": "./experiments/20210603_0612_9b852f4/params.json",
+    "CORPUS": "four_way_parallel_corpus",
+    "LANGUAGE_PAIR": "en-fr",
+    "CONTEXT_TYPE": "2-to-2",
+    "MAX_SEQ_LENGTH": 128,
+    "LENGTH_PENALTY": 1,
+    "BEAM_WIDTH": 5,
+    "raw_bleu_score": 43.22171766230361,
+    "raw_bleu_score_signature": "BLEU = 43.22 66.5/48.8/38.4/30.0 (BP = 0.984 ratio = 0.984 hyp_len = 1689357 ref_len = 1717078)",
+    "target_bleu_score": 30.712258233642785,
+    "target_bleu_score_signature": "BLEU = 30.71 58.9/36.7/25.4/17.6 (BP = 0.979 ratio = 0.980 hyp_len = 701880 ref_len = 716445)"
+}
