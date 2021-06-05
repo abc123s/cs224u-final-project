@@ -16,8 +16,8 @@ def get_en_doc_id(line):
 
 # function to get unique english document ids
 # for a particular language pair corpus
-def get_unique_en_doc_ids(language_pair):
-    with open(corpus_path(language_pair, 'ids'), 'r') as id_file:
+def get_unique_en_doc_ids(language_pair, corpus = 'raw'):
+    with open(corpus_path(language_pair, 'ids', corpus), 'r') as id_file:
         unique_en_doc_ids = set()
 
         for line in id_file:
